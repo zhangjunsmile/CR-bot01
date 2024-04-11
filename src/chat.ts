@@ -1,7 +1,7 @@
 import { ChatGPTAPI } from 'chatgpt';
 
-// const COMMON_PROMPT =
-// 'Below is a code patch, please help me do a brief code review on it. Any bug risks and/or improvement suggestions are welcome:';
+const COMMON_PROMPT =
+  'Below is a code patch, please help me do a brief code review on it. Any bug risks and/or improvement suggestions are welcome:';
 
 const FE_PROMPT = `[Personality]
 You are an outstanding software engineering expert, particularly skilled in front-end development technologies, familiar with frameworks and component libraries such as reactjs, vue, js, html, css, antd, etc.
@@ -47,19 +47,22 @@ export class Chat {
           ? +process.env.max_tokens
           : undefined,
       },
+      systemMessage: FE_PROMPT,
     });
   }
 
   private generatePrompt = (patch: string) => {
-    const answerLanguage = process.env.LANGUAGE
-      ? `Answer me in ${process.env.LANGUAGE},`
-      : '';
+    // const answerLanguage = process.env.LANGUAGE
+    //   ? `Answer me in ${process.env.LANGUAGE},`
+    //   : '';
 
-    const prompt = process.env.PROMPT || FE_PROMPT;
+    const prompt = process.env.PROMPT || COMMON_PROMPT;
 
-    return `${prompt}, ${answerLanguage}:
-    ${patch}
+    const code = `${prompt}:
+    <code_start>${patch}<code_end>
     `;
+    console.log('>>>', code);
+    return code;
   };
 
   public codeReview = async (patch: string) => {
